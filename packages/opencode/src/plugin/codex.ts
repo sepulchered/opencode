@@ -4,12 +4,13 @@ import { Installation } from "../installation"
 import { Auth, OAUTH_DUMMY_KEY } from "../auth"
 import os from "os"
 import { ProviderTransform } from "@/provider/transform"
+import { Flag } from "../flag/flag"
 
 const log = Log.create({ service: "plugin.codex" })
 
 const CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann"
-const ISSUER = "https://auth.openai.com"
-const CODEX_API_ENDPOINT = "https://chatgpt.com/backend-api/codex/responses"
+const ISSUER = Flag.OPENCODE_OPENAI_AUTH_URL
+const CODEX_API_ENDPOINT = Flag.OPENCODE_OPENAI_CODEX_URL
 const OAUTH_PORT = 1455
 const OAUTH_POLLING_SAFETY_MARGIN_MS = 3000
 
@@ -349,6 +350,13 @@ function waitForOAuthCallback(pkce: PkceCodes, state: string): Promise<TokenResp
 }
 
 export async function CodexAuthPlugin(input: PluginInput): Promise<Hooks> {
+  if (!Flag.OPENCODE_OPENAI_AUTH_URL) {
+    throw new Error("OPENCODE_OPENAI_AUTH_URL is required")
+  }
+  if (!Flag.OPENCODE_OPENAI_CODEX_URL) {
+    throw new Error("OPENCODE_OPENAI_CODEX_URL is required")
+  }
+
   return {
     auth: {
       provider: "openai",
@@ -377,7 +385,7 @@ export async function CodexAuthPlugin(input: PluginInput): Promise<Hooks> {
             providerID: "openai",
             api: {
               id: "gpt-5.3-codex",
-              url: "https://chatgpt.com/backend-api/codex",
+              url: Flag.OPENCODE_OPENAI_CODEX_URL,
               npm: "@ai-sdk/openai",
             },
             name: "GPT-5.3 Codex",

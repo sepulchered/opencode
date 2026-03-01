@@ -55,6 +55,10 @@ export namespace Flag {
   export const OPENCODE_EXPERIMENTAL_MARKDOWN = truthy("OPENCODE_EXPERIMENTAL_MARKDOWN")
   export const OPENCODE_MODELS_URL = process.env["OPENCODE_MODELS_URL"]
   export const OPENCODE_MODELS_PATH = process.env["OPENCODE_MODELS_PATH"]
+  export const OPENCODE_GITHUB_API_URL = process.env["OPENCODE_GITHUB_API_URL"]
+  export const OPENCODE_GITHUB_REPO_URL = process.env["OPENCODE_GITHUB_REPO_URL"]
+  export const OPENCODE_OPENAI_AUTH_URL = process.env["OPENCODE_OPENAI_AUTH_URL"]
+  export const OPENCODE_OPENAI_CODEX_URL = process.env["OPENCODE_OPENAI_CODEX_URL"]
 
   function number(key: string) {
     const value = process.env[key]

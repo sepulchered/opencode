@@ -21,8 +21,11 @@ export async function GET({ params: { platform, channel } }: APIEvent) {
   const assetName = assetNames[platform]
   if (!assetName) return new Response("Not Found", { status: 404 })
 
+  const repoUrl = process.env.OPENCODE_GITHUB_REPO_URL
+  if (!repoUrl) throw new Error("OPENCODE_GITHUB_REPO_URL is required")
+
   const resp = await fetch(
-    `https://github.com/anomalyco/${channel === "stable" ? "opencode" : "opencode-beta"}/releases/latest/download/${assetName}`,
+    `${repoUrl}/${channel === "stable" ? "opencode" : "opencode-beta"}/releases/latest/download/${assetName}`,
     {
       cf: {
         // in case gh releases has rate limits

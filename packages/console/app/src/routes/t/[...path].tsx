@@ -4,7 +4,11 @@ import { LOCALE_HEADER, localeFromCookieHeader, parseLocale, tag } from "~/lib/l
 async function handler(evt: APIEvent) {
   const req = evt.request.clone()
   const url = new URL(req.url)
-  const targetUrl = `https://enterprise.opencode.ai/${url.pathname}${url.search}`
+
+  const enterpriseDocsUrl = process.env.OPENCODE_ENTERPRISE_DOCS_URL
+  if (!enterpriseDocsUrl) throw new Error("OPENCODE_ENTERPRISE_DOCS_URL is required")
+
+  const targetUrl = `${enterpriseDocsUrl}/${url.pathname}${url.search}`
 
   const headers = new Headers(req.headers)
   const locale = parseLocale(req.headers.get(LOCALE_HEADER)) ?? localeFromCookieHeader(req.headers.get("cookie"))

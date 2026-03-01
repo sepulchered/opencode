@@ -8,11 +8,16 @@ export namespace AWS {
 
   const createClient = () => {
     if (!client) {
+      const region = process.env.AWS_SES_REGION
+      if (!region) throw new Error("AWS_SES_REGION is required")
+      const sesEndpoint = process.env.AWS_SES_ENDPOINT
+      if (!sesEndpoint) throw new Error("AWS_SES_ENDPOINT is required")
       client = new AwsClient({
         accessKeyId: Resource.AWS_SES_ACCESS_KEY_ID.value,
         secretAccessKey: Resource.AWS_SES_SECRET_ACCESS_KEY.value,
-        region: "us-east-1",
+        region,
       })
+      ;(client as any).sesEndpoint = sesEndpoint
     }
     return client
   }
@@ -25,7 +30,9 @@ export namespace AWS {
       replyTo: z.string().optional(),
     }),
     async (input) => {
-      const res = await createClient().fetch("https://email.us-east-1.amazonaws.com/v2/email/outbound-emails", {
+      const client = createClient()
+      const sesEndpoint = (client as any).sesEndpoint
+      const res = await client.fetch(`${sesEndpoint}/v2/email/outbound-emails`, {
         method: "POST",
         headers: {
           "X-Amz-Target": "SES.SendEmail",
